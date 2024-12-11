@@ -181,7 +181,7 @@ export class PassesService {
       async (transactionalEntityManager) => {
         const pass = await transactionalEntityManager
           .createQueryBuilder(Pass, 'pass')
-          .where('pass.id = :passId', { id })
+          .where('pass.id = :id', { id })
           .setLock('pessimistic_write')
           .getOne();
 

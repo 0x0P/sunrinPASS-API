@@ -15,8 +15,8 @@ export class PassesController {
 
   @Post('verify')
   @Roles(UserRole.TEACHER)
-  async verifyPass(@Body() verifyData: { passId: string; hash: string }) {
-    return this.passesService.verifyPass(verifyData.passId, verifyData.hash);
+  async verifyPass(@Body() verifyData: { id: string; hash: string }) {
+    return this.passesService.verifyPass(verifyData.id, verifyData.hash);
   }
 
   @Post()
