@@ -38,6 +38,8 @@ export class AuthController {
       }
 
       const result = await this.authService.login(req.user, res);
+      const frontendUrl = this.configService.get<string>('FRONTEND_URL');
+      res.redirect(`${frontendUrl}?login=success`);
       return result.user;
     } catch {
       const frontendUrl = this.configService.get<string>('FRONTEND_URL');
