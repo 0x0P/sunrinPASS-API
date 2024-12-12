@@ -47,6 +47,18 @@ export class AuthController {
     }
   }
 
+  @Get('status')
+  @UseGuards(JwtAuthGuard)
+  async getStatus(@Req() req) {
+    return {
+      id: req.user.id,
+      email: req.user.email,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+      isTeacher: req.user.isTeacher,
+    };
+  }
+
   @Post('refresh')
   async refreshTokens(
     @Body() refreshTokenDto: RefreshTokenDto,
