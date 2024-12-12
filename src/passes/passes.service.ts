@@ -22,11 +22,19 @@ export class PassesService {
 
   private calculateExpirationDate(
     type: PassType,
+    startTime: Date,
     returnTime: Date | null,
   ): Date {
     if (type === PassType.OUTING && returnTime) {
+      // 외출증은 귀가 시간이 만료 시간
       return new Date(returnTime);
+    } else if (type === PassType.EARLY_LEAVE) {
+      // 조퇴증은 시작 시간 날짜의 자정이 만료 시간
+      const expirationDate = new Date(startTime);
+      expirationDate.setHours(23, 59, 59, 999);
+      return expirationDate;
     } else {
+      // 기타 케이스는 당일 자정
       const endOfDay = new Date();
       endOfDay.setHours(23, 59, 59, 999);
       return endOfDay;
@@ -58,7 +66,11 @@ export class PassesService {
       returnTime,
       student,
       teacher: { id: createPassDto.teacherId },
-      expiresAt: this.calculateExpirationDate(createPassDto.type, returnTime),
+      expiresAt: this.calculateExpirationDate(
+        createPassDto.type,
+        startTime,
+        returnTime,
+      ),
     });
 
     const savedPass = await this.passRepository.save(pass);
@@ -84,7 +96,7 @@ export class PassesService {
           status: PassStatus.APPROVED,
         },
       ],
-      relations: ['teacher'],
+      relations: ['student', 'teacher'],
       order: { createdAt: 'DESC' },
     });
 
@@ -97,7 +109,7 @@ export class PassesService {
         teacher: { id: teacherId },
         status: PassStatus.PENDING,
       },
-      relations: ['student'],
+      relations: ['student', 'teacher'],
       order: { createdAt: 'DESC' },
     });
 
